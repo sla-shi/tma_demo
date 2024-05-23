@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Mini App</title>
+</head>
+<body>
+    <script>
+        // Ensure the Telegram Web App SDK is available
+        window.Telegram.WebApp.ready();
+
+        // Extract the user ID
+        const userId = window.Telegram.WebApp.initDataUnsafe.user.id;
+        console.log("User ID:", userId);
+
+        // Prepare the data for the API request
+        const requestData = {
+            userId: userId,
+            // Include any other necessary data
+        };
+
+        // Send the data to the external API
+        fetch('https://https://tmapoc.free.beeceptor.com', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    </script>
+</body>
+</html>
