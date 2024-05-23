@@ -4,8 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Telegram Mini App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #user-id {
+            margin-top: 20px;
+            font-size: 20px;
+            color: blue;
+        }
+        #console-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
+    <h1>Welcome to the Telegram Mini App</h1>
+    <div id="user-id">User ID will be displayed here.</div>
+    <button id="console-button">Open Console/DevTools</button>
+
     <script>
         // Ensure the Telegram Web App SDK is available
         window.Telegram.WebApp.ready();
@@ -14,6 +35,9 @@
         const userId = window.Telegram.WebApp.initDataUnsafe.user.id;
         console.log("User ID:", userId);
 
+        // Display the user ID on the page
+        document.getElementById('user-id').innerText = `User ID: ${userId}`;
+
         // Prepare the data for the API request
         const requestData = {
             userId: userId,
@@ -21,7 +45,7 @@
         };
 
         // Send the data to the external API
-        fetch('https://https://tmapoc.free.beeceptor.com', {
+        fetch('https://tmapoc.free.beeceptor.com', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -35,6 +59,8 @@
         .catch((error) => {
             console.error('Error:', error);
         });
+
+
     </script>
 </body>
 </html>
