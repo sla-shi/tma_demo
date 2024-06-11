@@ -15,13 +15,38 @@
             color: blue;
         }
     </style>
+   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+   <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 </head>
 <body>
     <h1>Welcome to the Telegram Mini App</h1>
     <div id="user-id">User ID will be displayed here.</div>
+    <div id="ton-connect"></div>
     
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
+        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+            manifestUrl: 'https://sla-shi.github.io/tma_demo/tonconnect-manifest.json',
+            buttonRootId: 'ton-connect',
+            uiPreferences: {
+                borderRadius: 's',
+                twaReturnUrl: 'https://t.me/TMA_WebAppUser_POC_1_bot'
+            }
+        });
+        window.addEventListener('ton-connect-ui-connection-started', (event) => {
+            console.log('connection-started:', event.detail);
+        });
+        window.addEventListener('ton-connect-ui-connection-completed', (event) => {
+            console.log('connection-completed:', event.detail);
+        });
+        window.addEventListener('ton-connect-ui-connection-error', (event) => {
+            console.log('connection-error:', event.detail);
+        });
+    </script>
+    
+
+
+    <script>
+        // Store availavle info
         // Ensure the Telegram Web App SDK is available
         window.Telegram.WebApp.ready();
 
@@ -53,9 +78,8 @@
         .catch((error) => {
             console.error('Error:', error);
         });
-
-
     </script>
+
      <!-- Eruda is console for mobile browsers -->
      <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
      <script>eruda.init();</script>
