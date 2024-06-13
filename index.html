@@ -57,27 +57,6 @@
         // Display the user ID on the page
         document.getElementById('user-id').innerText = `User ID: ${userId}`;
 
-        // Prepare the data for the API request
-        const requestData = {
-            userId: userId,
-            // Include any other necessary data
-        };
-
-        // Send the data to the external API
-        fetch('https://tmapoc.free.beeceptor.com', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
     </script>
 
      <!-- Eruda is console for mobile browsers -->
