@@ -22,7 +22,8 @@
     <h1>Welcome to the Telegram Mini App</h1>
     <div id="user-id">User ID will be displayed here.</div>
     <div id="ton-connect"></div>
-    
+
+
     <script>
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://sla-shi.github.io/tma_demo/tonconnect-manifest.json',
@@ -41,9 +42,25 @@
         window.addEventListener('ton-connect-ui-connection-error', (event) => {
             console.log('connection-error:', event.detail);
         });
+
+        async function mySendTransaction() {
+            const transaction = {
+                messages: [
+                    {
+                        address: "0:787b323b31ca300f0deb830783944caf2cc75be18c78c7079d94fb3928230cc1", 
+                        amount: "20000000" 
+                    }
+                ]
+            }
+
+            const result = await tonConnectUI.sendTransaction(transaction)
+
+        }
     </script>
     
-
+    <button onClick="mySendTransaction()">
+        Buy an item for 0.2 TON
+    </button>
 
     <script>
         // Store availavle info
