@@ -45,6 +45,7 @@
 
         async function mySendTransaction() {
             const transaction = {
+                validUntil: Math.round((Date.now() + Number(1000*300)) / 1000),
                 messages: [
                     {
                         address: "0:787b323b31ca300f0deb830783944caf2cc75be18c78c7079d94fb3928230cc1", 
