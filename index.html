@@ -42,6 +42,15 @@
         window.addEventListener('ton-connect-ui-connection-error', (event) => {
             console.log('connection-error:', event.detail);
         });
+        window.addEventListener('ton-connect-ui-transaction-sent-for-signature', (event) => {
+            console.log('transaction-sent-for-signature:', event.detail);
+        });
+        window.addEventListener('ton-connect-ui-transaction-transaction-signed', (event) => {
+            console.log('transaction-signed:', event.detail);
+        });
+        window.addEventListener('ton-connect-ui-transaction-signing-failed', (event) => {
+            console.log('transaction-signing-failed:', event.detail);
+        });
 
         async function mySendTransaction() {
             const transaction = {
@@ -56,11 +65,11 @@
 
             try {
                 const result = await tonConnectUI.sendTransaction(transaction);
-                // you can use signed boc to find the transaction 
-                const someTxData = await myAppExplorerService.getTransaction(result.boc);
-                alert('Transaction was sent successfully', someTxData);
+                console.log('Transaction was sent with sendTransaction()');
             } catch (e) {
+                console.log("Exception: ")
                 console.error(e);
+                console.error(e.name);
             }
         }
     </script>
