@@ -47,6 +47,8 @@
         });
         window.addEventListener('ton-connect-ui-transaction-signed', (event) => {
             console.log('transaction-signed:', event.detail);
+            console.log("Transaction hash:");
+            console.log(event.detail.signed_transaction);
         });
         window.addEventListener('ton-connect-ui-transaction-signing-failed', (event) => {
             console.log('transaction-signing-failed:', event.detail);
