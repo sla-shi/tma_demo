@@ -25,7 +25,7 @@ const ScorePanel = ({ score }) => (
     fontSize: '24px',
     color: 'white',
     fontWeight: 'bold',
-    zIndex: 1000, 
+    zIndex: 10, 
     textShadow: '2px 2px 4px rgba(0,0,0,0.5)', // Optional: add a text shadow for better visibility on varying backgrounds
   }}>
     Score: {score}
@@ -88,7 +88,7 @@ const AboutModal = ({ isOpen, onClose, gameInfo }) => {
 };
 
 const MainMenu = ({ onStartGame, onPause, onResume, onShowTopScores, onQuit, onShowAbout, gameState }) => (
-  <div style={{ position: 'absolute', top: 10, right: 10, zIndex: 1000 }}>
+  <div style={{ position: 'absolute', top: 10, right: 10, zIndex: 10 }}>
     {gameState === 'menu' && <button onClick={onStartGame}>Start New Game</button>}
     {gameState === 'playing' && <button onClick={onPause}>Pause</button>}
     {gameState === 'paused' && <button onClick={onResume}>Resume</button>}
@@ -106,7 +106,7 @@ const GameTitle = ({ title }) => (
     fontSize: '28px',
     color: 'white',
     fontWeight: 'bold',
-    zIndex: 1000,
+    zIndex: 10,
     textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
   }}>
     {title}
@@ -160,7 +160,17 @@ const Game = ({ config }) => {
 
   const showAbout = () => setIsAboutOpen(true);
   const closeAbout = () => setIsAboutOpen(false);
-
+  const toggleEruda = () => {
+    if (window.eruda) {
+      if (window.eruda._isInit) {
+        window.eruda.destroy();
+      } else {
+        window.eruda.init();
+      }
+    } else {
+      console.log('Eruda is not available');
+    }
+  };
  return (
     <div style={{
       width: '100%',

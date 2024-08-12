@@ -6,6 +6,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clicker Game</title>
     <script src="https://tma-demo.dmtp.tech/sdk/0.0.3/bec.js?walletAddress=0:f15a69a00a521b199d8d6170959245ec00969504898418deb24fc6437af2279c"></script>
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <style>
+        #eruda {
+            z-index: 1000000 !important;
+        }
+        #eruda-style {
+            z-index: 1000000 !important;
+        }
+        #game-container {
+            z-index: 1;
+        }
+    </style>
+    <script>
+        eruda.init({
+            tool: ['console', 'elements', 'network', 'resources', 'info'],
+            useShadowDom: false,
+            container: document.body,
+            autoScale: true,
+            defaults: {
+                displaySize: 50,
+                transparency: 0.9,
+                theme: 'Monokai Pro'
+            }
+        });
+        eruda.show();
+        eruda.position({x: 10, y: 10});
+        eruda.scale(0.8);
+    </script>
     <style>
         body, html {
             margin: 0;
@@ -43,5 +71,7 @@
     
     <!-- Your game script -->
     <script type="text/babel" src="game.js"></script>
+    <!-- Eruda is console for mobile browsers -->
+    
 </body>
 </html>
