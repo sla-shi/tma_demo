@@ -35,6 +35,8 @@ const ScorePanel = ({ score }) => (
 const AboutModal = ({ isOpen, onClose, gameInfo }) => {
   if (!isOpen) return null;
 
+  const telegramUser = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
+  const userId = telegramUser.id || 'N/A';
   return (
     <div style={{
       position: 'fixed',
@@ -61,6 +63,8 @@ const AboutModal = ({ isOpen, onClose, gameInfo }) => {
         <p dangerouslySetInnerHTML={{ __html: gameInfo.backgroundCredit }} />
         <h3>Object Image</h3>
         <p dangerouslySetInnerHTML={{ __html: gameInfo.objectCredit }} />
+        <h3>Telegram User Info (Debug)</h3>
+        <p>User ID: {userId}</p>
         <button onClick={onClose}>Close</button>
       </div>
     </div>
@@ -78,13 +82,30 @@ const MainMenu = ({ onStartGame, onPause, onResume, onShowTopScores, onQuit, onS
   </div>
 );
 
-
+const GameTitle = ({ title }) => (
+  <h1 style={{
+    position: 'absolute',
+    top: 60,
+    left: 10,
+    fontSize: '28px',
+    color: 'white',
+    fontWeight: 'bold',
+    zIndex: 1000,
+    textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+  }}>
+    {title}
+  </h1>
+);
 
 const Game = ({ config }) => {
   const [score, setScore] = useState(0);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [gameState, setGameState] = useState('menu');
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+
+  useEffect(() => {
+    document.title = config.name;
+  }, [config.name]);
 
   const moveObject = useCallback(() => {
     const maxX = window.innerWidth - 100;  // Assuming object width is 100px
@@ -132,6 +153,7 @@ const Game = ({ config }) => {
       backgroundSize: 'cover',
       position: 'relative',
     }}>
+      <GameTitle title={config.name} />
       <ScorePanel score={score} />
       <MainMenu
         onStartGame={startGame}
