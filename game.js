@@ -34,9 +34,25 @@ const ScorePanel = ({ score }) => (
 
 const AboutModal = ({ isOpen, onClose, gameInfo }) => {
   if (!isOpen) return null;
+  const [userId, setUserId] = useState('N/A');
+  
+  useEffect(() => {
+    const fetchTelegramUserId = () => {
+      if (window.Telegram && window.Telegram.WebApp) {
+        const initDataUnsafe = window.Telegram.WebApp.initDataUnsafe || {};
+        
+        setUserId(initDataUnsafe.user?.id || 'N/A');
 
-  const telegramUser = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
-  const userId = telegramUser.id || 'N/A';
+        // Update the user-id element if it exists (for compatibility with index.html)
+        const userIdElement = document.getElementById('user-id');
+        if (userIdElement) {
+          userIdElement.textContent = `Telegram user ID: ${initDataUnsafe.user?.id || 'N/A'}`;
+        }
+      }
+    };
+    fetchTelegramUserId();
+  }, []);
+
   return (
     <div style={{
       position: 'fixed',
