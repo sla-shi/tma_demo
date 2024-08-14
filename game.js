@@ -87,16 +87,27 @@ const AboutModal = ({ isOpen, onClose, gameInfo }) => {
   );
 };
 
-const MainMenu = ({ onStartGame, onPause, onResume, onShowTopScores, onQuit, onShowAbout, gameState }) => (
+const MainMenu = ({ onStartGame, onPause, onResume, onShowTopScores, onQuit, onShowAbout, gameState }) => {
+
+  const handlePauseClick = useCallback(() => {
+    onPause();
+    if (window.TE && typeof window.TE.offerWall === 'function') {
+      window.TE.offerWall();
+    } else {
+      console.error('TE is not defined or offerWall is not a function');
+    }
+  }, [onPause]);
+    
+  return (
   <div style={{ position: 'absolute', top: 10, right: 10, zIndex: 10 }}>
     {gameState === 'menu' && <button onClick={onStartGame}>Start New Game</button>}
-    {gameState === 'playing' && <button onClick={onPause}>Pause</button>}
+    {gameState === 'playing' && <button onClick={handlePauseClick}>Pause</button>}
     {gameState === 'paused' && <button onClick={onResume}>Resume</button>}
     <button onClick={onShowTopScores}>Top Scores</button>
     <button onClick={onShowAbout}>About</button>
     <button onClick={onQuit}>Quit</button>
-  </div>
-);
+  </div>);
+}
 
 const GameTitle = ({ title }) => (
   <h1 style={{
@@ -150,7 +161,11 @@ const Game = ({ config }) => {
     moveObject();
   };
 
-  const pauseGame = () => setGameState('paused');
+  const pauseGame = useCallback(() => {
+    setGameState('paused');
+    // The offer wall is now opened in the MainMenu component
+  }, []);
+
   const resumeGame = () => setGameState('playing');
   const showTopScores = () => alert('Top Scores: Coming soon!');
   const quitGame = () => {
@@ -171,7 +186,7 @@ const Game = ({ config }) => {
       console.log('Eruda is not available');
     }
   };
- return (
+  return (
     <div style={{
       width: '100%',
       height: '100%',
