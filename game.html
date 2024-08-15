@@ -5,8 +5,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clicker Game</title>
+    <!-- React and ReactDOM CDN - Load these first -->
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <!-- SDK script - Load after React -->
+    <script>
+        window.React = React;  // Ensure SDK uses the same React instance
+        window.ReactDOM = ReactDOM;
+    </script>
     <script src="https://tma-demo.dmtp.tech/sdk/0.0.3/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        // Wallet address mapping
+        const gameWalletAddresses = {
+            cosmicClicker: 'cRWKKkEt%2BiU82zuXuYbeHC292NMMGAu4KesHGNLe6Sc%3D',
+            forestFriend: 'QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D',
+            balloonBopper: 'QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D',
+            deepSeaClicker: 'QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D'
+        };
+
+        // Function to get the game type from URL parameter
+        function getGameType() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('game') || 'cosmicClicker';
+        }
+
+        // Function to get the wallet address based on the game type
+        function getWalletAddress(gameType) {
+            return gameWalletAddresses[gameType] || gameWalletAddresses.cosmicClicker;
+        }
+
+        // Function to load BEC script with the correct wallet address
+        function loadBECScript(gameType) {
+            const walletAddress = getWalletAddress(gameType);
+            const encodedWalletAddress = walletAddress; //encodeURIComponent(walletAddress);
+            const becScriptUrl = `https://tma-demo.dmtp.tech/sdk/0.0.3/bec.js?walletAddress=${encodedWalletAddress}`;
+
+            const script = document.createElement('script');
+            script.src = becScriptUrl;
+            script.async = true;
+            document.head.appendChild(script);
+
+            console.log('BEC script loaded with wallet address:', walletAddress);
+        }
+
+        // Load BEC script immediately
+        loadBECScript(getGameType());
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
     <style>
         #eruda {
@@ -62,17 +107,12 @@
 <body>
     <div id="exchangeBanner">Ad Banner Placeholder</div>
     <div id="game-container"></div>
-
-    <!-- React and ReactDOM CDN -->
-    <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
-    
+   
     <!-- Babel for JSX transformation -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
-    <!-- Your game script -->
+    <!-- Your game script - Load last -->
     <script type="text/babel" src="game.js"></script>
-    <!-- Eruda is console for mobile browsers -->
     
 </body>
 </html>
