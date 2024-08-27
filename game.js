@@ -131,6 +131,16 @@ const Game = ({ config }) => {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
 
   useEffect(() => {
+    const script = document.createElement('script');
+    script.src = "https://tma-demo.dmtp.tech/sdk/0.0.4/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+    document.body.removeChild(script);
+    };
+  }, []);
+
+  useEffect(() => {
     document.title = config.name;
   }, [config.name]);
 
