@@ -132,7 +132,8 @@ const Game = ({ config }) => {
 
   useEffect(() => {
     const script = document.createElement('script');
-    script.src = "https://tma-demo.dmtp.tech/sdk/0.0.4/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D";
+    // script.src = "https://tma-demo.dmtp.tech/sdk/0.0.4/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D";
+    script.src = "https://bec.dmtp.tech/0.0.4/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D";
     script.async = true;
     document.body.appendChild(script);
     return () => {
@@ -264,7 +265,7 @@ const games = {
     name: "Deep Sea Clicker",
     backgroundUrl: 'game_assets/ocean-background.jpg',
     backgroundCredit: 'Photo by <a href="https://unsplash.com/@silasbaisch?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Silas Baisch</a> on <a href="https://unsplash.com/photos/blue-and-clear-body-of-water-K785Da4A_JA?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>',
-    objectUrl: 'game_assets/jellyfish.jpg',
+    objectUrl: 'game_assets/jellyfish-cute.png',
     objectCredit: 'Photo by <a href="https://unsplash.com/@kanyonbollinger?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Kanyon Bollinger</a> on <a href="https://unsplash.com/photos/underwater-photography-of-white-jellyfish-1AjxqINfBYs?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>',
     moveInterval: 4000,
   },
