@@ -26,13 +26,13 @@ const ScorePanel = ({ score }) => (
     color: 'white',
     fontWeight: 'bold',
     zIndex: 10, 
-    textShadow: '2px 2px 4px rgba(0,0,0,0.5)', // Optional: add a text shadow for better visibility on varying backgrounds
+    textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
   }}>
     Score: {score}
   </div>
 );
 
-const AboutModal = ({ isOpen, onClose, gameInfo }) => {
+const AboutModal = ({ isOpen, onClose, gameInfo, environment }) => {
   if (!isOpen) return null;
   const [userId, setUserId] = useState('N/A');
   
@@ -43,7 +43,6 @@ const AboutModal = ({ isOpen, onClose, gameInfo }) => {
         
         setUserId(initDataUnsafe.user?.id || 'N/A');
 
-        // Update the user-id element if it exists (for compatibility with index.html)
         const userIdElement = document.getElementById('user-id');
         if (userIdElement) {
           userIdElement.textContent = `Telegram user ID: ${initDataUnsafe.user?.id || 'N/A'}`;
@@ -81,6 +80,8 @@ const AboutModal = ({ isOpen, onClose, gameInfo }) => {
         <p dangerouslySetInnerHTML={{ __html: gameInfo.objectCredit }} />
         <h3>Telegram User Info (Debug)</h3>
         <p>User ID: {userId}</p>
+        <h3>Environment</h3>
+        <p>Current environment: {environment}</p>
         <button onClick={onClose}>Close</button>
       </div>
     </div>
@@ -129,15 +130,21 @@ const Game = ({ config }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [gameState, setGameState] = useState('menu');
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [environment, setEnvironment] = useState('prod');
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const env = urlParams.get('env') || 'prod';
+    setEnvironment(env);
+
     const script = document.createElement('script');
-    // script.src = "https://tma-demo.dmtp.tech/sdk/0.0.4/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D";
-    script.src = "https://bec.dmtp.tech/0.0.4/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D";
+    script.src = env === 'dev' 
+      ? "https://tma-demo.dmtp.tech/0.0.4/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D"
+      : "https://bec.dmtp.tech/0.0.4/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D";
     script.async = true;
     document.body.appendChild(script);
     return () => {
-    document.body.removeChild(script);
+      document.body.removeChild(script);
     };
   }, []);
 
@@ -146,11 +153,11 @@ const Game = ({ config }) => {
   }, [config.name]);
 
   const moveObject = useCallback(() => {
-    const maxX = window.innerWidth - 100;  // Assuming object width is 100px
-    const maxY = window.innerHeight - 150; // 100px for object height + 50px for ad banner
+    const maxX = window.innerWidth - 100;
+    const maxY = window.innerHeight - 150;
     setPosition({
       x: Math.random() * maxX,
-      y: Math.random() * maxY + 50, // Add 50px to account for ad banner
+      y: Math.random() * maxY + 50,
     });
   }, []);
 
@@ -174,7 +181,6 @@ const Game = ({ config }) => {
 
   const pauseGame = useCallback(() => {
     setGameState('paused');
-    // The offer wall is now opened in the MainMenu component
   }, []);
 
   const resumeGame = () => setGameState('playing');
@@ -186,17 +192,7 @@ const Game = ({ config }) => {
 
   const showAbout = () => setIsAboutOpen(true);
   const closeAbout = () => setIsAboutOpen(false);
-  const toggleEruda = () => {
-    if (window.eruda) {
-      if (window.eruda._isInit) {
-        window.eruda.destroy();
-      } else {
-        window.eruda.init();
-      }
-    } else {
-      console.log('Eruda is not available');
-    }
-  };
+
   return (
     <div style={{
       width: '100%',
@@ -231,6 +227,7 @@ const Game = ({ config }) => {
           backgroundCredit: config.backgroundCredit,
           objectCredit: config.objectCredit,
         }}
+        environment={environment}
       />
     </div>
   );
@@ -271,7 +268,6 @@ const games = {
   },
 };
 
-// Get the game type from the URL, default to cosmicClicker
 const getGameType = () => {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get('game') || 'cosmicClicker';
@@ -279,7 +275,6 @@ const getGameType = () => {
 
 const gameType = getGameType();
 const gameConfig = games[gameType] || games.cosmicClicker;
-
 
 ReactDOM.render(
   <Game config={gameConfig} />,
