@@ -26,7 +26,7 @@ const ScorePanel = ({ score }) => (
     color: 'white',
     fontWeight: 'bold',
     zIndex: 10, 
-    textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+    textShadow: '2px 2px 4px rgba(0,0,0,0.5)', // Optional: add a text shadow for better visibility on varying backgrounds
   }}>
     Score: {score}
   </div>
@@ -42,7 +42,7 @@ const AboutModal = ({ isOpen, onClose, gameInfo, environment }) => {
         const initDataUnsafe = window.Telegram.WebApp.initDataUnsafe || {};
         
         setUserId(initDataUnsafe.user?.id || 'N/A');
-
+        // Update the user-id element if it exists (for compatibility with index.html)
         const userIdElement = document.getElementById('user-id');
         if (userIdElement) {
           userIdElement.textContent = `Telegram user ID: ${initDataUnsafe.user?.id || 'N/A'}`;
@@ -153,11 +153,11 @@ const Game = ({ config }) => {
   }, [config.name]);
 
   const moveObject = useCallback(() => {
-    const maxX = window.innerWidth - 100;
-    const maxY = window.innerHeight - 150;
+    const maxX = window.innerWidth - 100; // Assuming object width is 100px
+    const maxY = window.innerHeight - 150; // 100px for object height + 50px for ad banner
     setPosition({
       x: Math.random() * maxX,
-      y: Math.random() * maxY + 50,
+      y: Math.random() * maxY + 50, // Add 50px to account for ad banner
     });
   }, []);
 
@@ -181,6 +181,7 @@ const Game = ({ config }) => {
 
   const pauseGame = useCallback(() => {
     setGameState('paused');
+    // The offer wall is now opened in the MainMenu component
   }, []);
 
   const resumeGame = () => setGameState('playing');
@@ -268,6 +269,7 @@ const games = {
   },
 };
 
+// Get the game type from the URL, default to cosmicClicker
 const getGameType = () => {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get('game') || 'cosmicClicker';
