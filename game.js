@@ -154,10 +154,10 @@ const Game = ({ config }) => {
 
   const moveObject = useCallback(() => {
     const maxX = window.innerWidth - 100; // Assuming object width is 100px
-    const maxY = window.innerHeight - 150; // 100px for object height + 50px for ad banner
+    const maxY = window.innerHeight - 155; // 100px for object height + 50px for ad banner
     setPosition({
       x: Math.random() * maxX,
-      y: Math.random() * maxY + 50, // Add 50px to account for ad banner
+      y: Math.random() * maxY + 155, // Add 115px to account for ad banner
     });
   }, []);
 
