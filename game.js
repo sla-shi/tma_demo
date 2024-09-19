@@ -32,7 +32,7 @@ const ScorePanel = ({ score }) => (
   </div>
 );
 
-const AboutModal = ({ isOpen, onClose, gameInfo, environment }) => {
+const AboutModal = ({ isOpen, onClose, gameInfo, environment, isTMA }) => {
   if (!isOpen) return null;
   const [userId, setUserId] = useState('N/A');
   
@@ -82,6 +82,8 @@ const AboutModal = ({ isOpen, onClose, gameInfo, environment }) => {
         <p>User ID: {userId}</p>
         <h3>Environment</h3>
         <p>Current environment: {environment}</p>
+        <h3>TMA mode</h3>
+        <p>Is in TMA: {isTMA}</p>
         <button onClick={onClose}>Close</button>
       </div>
     </div>
@@ -131,22 +133,62 @@ const Game = ({ config }) => {
   const [gameState, setGameState] = useState('menu');
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [environment, setEnvironment] = useState('prod');
+  const [clickVerified, setClickVerified] = useState(false);
+  const [isTMA, setIsTMA] = useState(false);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const env = urlParams.get('env') || 'prod';
     setEnvironment(env);
 
+    // Detect if we're in TMA mode
+    const tg = window.Telegram?.WebApp;
+    setIsTMA(!!tg);
+
+    let clickId;
+    if (isTMA) {
+      // In TMA mode, get clickId from initData
+      const initDataUnsafe = tg.initDataUnsafe;
+      clickId = initDataUnsafe.start_param;
+    } else {
+      // In normal mode, get clickId from URL parameter
+      clickId = urlParams.get('click_id');
+    }
+    
+    if (clickId) {
+      verifyClick(clickId);
+    }
+    else {
+      console.log("No Click ID found in URL or tg.initData");
+    }
+
     const script = document.createElement('script');
     script.src = env === 'dev' 
-      ? "https://tma-demo.dmtp.tech/sdk/0.0.4/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D"
+      ? "https://tma-demo.dmtp.tech/sdk/0.0.5/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D"
       : "https://bec.dmtp.tech/0.0.4/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D";
     script.async = true;
     document.body.appendChild(script);
     return () => {
       document.body.removeChild(script);
     };
-  }, []);
+  }, [isTMA]);
+
+  const verifyClick = async (clickId) => {
+    try {
+      const response = await fetch(`https://click.dmtp.tech/banners/click/${encodeURIComponent(clickId)}`);
+      if (!response.ok) {
+        console.log('Click ID verification failed');
+      }
+      const data = await response.json();
+      if (data.valid) {
+        setClickVerified(true);
+        setScore(100); // Set initial score to 100 for verified clicks
+        console.log('Click ID verified, set score to 100!');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   useEffect(() => {
     document.title = config.name;
@@ -174,7 +216,9 @@ const Game = ({ config }) => {
   };
 
   const startGame = () => {
-    setScore(0);
+    if (!clickVerified) {
+      setScore(0); // Reset score to 0 for non-verified clicks
+    }
     setGameState('playing');
     moveObject();
   };
@@ -188,7 +232,9 @@ const Game = ({ config }) => {
   const showTopScores = () => alert('Top Scores: Coming soon!');
   const quitGame = () => {
     setGameState('menu');
-    setScore(0);
+    if (!clickVerified) {
+      setScore(0);
+    }
   };
 
   const showAbout = () => setIsAboutOpen(true);
@@ -229,6 +275,7 @@ const Game = ({ config }) => {
           objectCredit: config.objectCredit,
         }}
         environment={environment}
+        isTMA={isTMA}
       />
     </div>
   );
