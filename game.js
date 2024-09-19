@@ -150,13 +150,16 @@ const Game = ({ config }) => {
       // In TMA mode, get clickId from initData
       const initDataUnsafe = tg.initDataUnsafe;
       clickId = initDataUnsafe.start_param;
+      if (clickId && clickId.startsWith('clickid_')) {
+        clickId = clickId.split('_')[1];  // Extract the actual click ID
+      }
     } else {
       // In normal mode, get clickId from URL parameter
       clickId = urlParams.get('click_id');
     }
     
     if (clickId) {
-      verifyClick(clickId);
+      verifyClick(clickId, env);
     }
     else {
       console.log("No Click ID found in URL or tg.initData");
@@ -173,9 +176,12 @@ const Game = ({ config }) => {
     };
   }, [isTMA]);
 
-  const verifyClick = async (clickId) => {
+  const verifyClick = async (clickId, env) => {
     try {
-      const response = await fetch(`https://click.dmtp.tech/banners/click/${encodeURIComponent(clickId)}`);
+      api_url = env == 'dev'
+        ? `https://click-dev.dmtp.tech/banners/click/${encodeURIComponent(clickId)}`
+        : `https://click.dmtp.tech/banners/click/${encodeURIComponent(clickId)}`;
+      const response = await fetch(api_url);
       if (!response.ok) {
         console.log('Click ID verification failed');
       }
