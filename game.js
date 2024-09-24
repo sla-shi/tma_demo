@@ -141,9 +141,29 @@ const Game = ({ config }) => {
     const env = urlParams.get('env') || 'prod';
     setEnvironment(env);
 
-    // Detect if we're in TMA mode
-    const tg = window.Telegram?.WebApp;
-    setIsTMA(!!tg);
+    // Improved TMA detection
+    const detectTMA = () => {
+      if (window.Telegram && window.Telegram.WebApp) {
+        console.log('Telegram WebApp object found:', window.Telegram.WebApp);
+        return true;
+      }
+      // Check if we're in an iframe, which is typically the case for TMAs
+      if (window.self !== window.top) {
+        console.log('Running in an iframe, likely a TMA');
+        return true;
+      }
+      // Check for Telegram-specific URL parameters
+      if (urlParams.has('tgWebAppData') || urlParams.has('tgWebAppVersion')) {
+        console.log('Telegram-specific URL parameters found');
+        return true;
+      }
+      console.log('Not running in TMA environment');
+      return false;
+    };
+    
+    const tmaDetected = detectTMA();
+    setIsTMA(tmaDetected);
+    console.log('TMA detected:', tmaDetected); // Debug log
 
     let clickId = null;
     let userId = null;
@@ -176,8 +196,7 @@ const Game = ({ config }) => {
 
   const verifyClick = async (clickId, userId, env) => {
     try {
-      const tg = window.Telegram?.WebApp;
-      const _isTMA = !!tg;
+      const _isTMA = false; //detectTMA()
       console.log(`Verification isTMA: ${isTMA} vs ${_isTMA}`);
       console.log('Verifying click:', { clickId, userId, env }); // Debug log
       
