@@ -144,13 +144,17 @@ const Game = ({ config }) => {
     // Improved TMA detection
     const detectTMA = () => {
       if (window.Telegram && window.Telegram.WebApp) {
-        console.log('Telegram WebApp object found:', window.Telegram.WebApp);
-        return true;
-      }
-      // Check if we're in an iframe, which is typically the case for TMAs
-      if (window.self !== window.top) {
-        console.log('Running in an iframe, likely a TMA');
-        return true;
+        // Additional checks to ensure it's a real Telegram WebApp
+        if (typeof window.Telegram.WebApp.initData === 'string' && 
+            window.Telegram.WebApp.initData.length > 0 &&
+            typeof window.Telegram.WebApp.initDataUnsafe === 'object' &&
+            Object.keys(window.Telegram.WebApp.initDataUnsafe).length > 0) {
+          console.log('Verified Telegram WebApp environment');
+          return true;
+        } else {
+          console.log('Telegram WebApp object found, but seems invalid');
+          return false;
+        }
       }
       // Check for Telegram-specific URL parameters
       if (urlParams.has('tgWebAppData') || urlParams.has('tgWebAppVersion')) {
@@ -160,7 +164,7 @@ const Game = ({ config }) => {
       console.log('Not running in TMA environment');
       return false;
     };
-    
+
     const tmaDetected = detectTMA();
     setIsTMA(tmaDetected);
     console.log('TMA detected:', tmaDetected); // Debug log
@@ -168,7 +172,7 @@ const Game = ({ config }) => {
     let clickId = null;
     let userId = null;
 
-    if (isTMA) {
+    if (tmaDetected) {
       // In TMA mode, get clickId from initData
       const initDataUnsafe = tg.initDataUnsafe;
       userId = initDataUnsafe.user?.id;
@@ -181,7 +185,7 @@ const Game = ({ config }) => {
       clickId = urlParams.get('click_id');
     }
     
-    verifyClick(clickId, userId, env);
+    verifyClick(clickId, userId, env, tmaDetected);
 
     const script = document.createElement('script');
     script.src = env === 'dev' 
@@ -194,7 +198,7 @@ const Game = ({ config }) => {
     };
   }, []);
 
-  const verifyClick = async (clickId, userId, env) => {
+  const verifyClick = async (clickId, userId, env, isTMA) => {
     try {
       const _isTMA = false; //detectTMA()
       console.log(`Verification isTMA: ${isTMA} vs ${_isTMA}`);
@@ -203,7 +207,7 @@ const Game = ({ config }) => {
       let apiUrl;
       const baseUrl = env === 'dev' ? 'https://click-dev.dmtp.tech' : 'https://click.dmtp.tech';
 
-      if (_isTMA) {
+      if (isTMA) {
         if (!userId) {
           console.error('User ID is required for TMA mode verification');
           return;
@@ -226,7 +230,7 @@ const Game = ({ config }) => {
         console.log(`Verification failed: ${response}`);
       }
       const data = await response.json();
-      console.log(`Verification response: ${data}`);
+      console.log('Verification response: ', JSON.stringify(data, null, 2));
       if (data.valid) {
         setClickVerified(true);
         setScore(100); // Set initial score to 100 for verified clicks
