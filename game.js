@@ -145,10 +145,13 @@ const Game = ({ config }) => {
     const tg = window.Telegram?.WebApp;
     setIsTMA(!!tg);
 
-    let clickId;
+    let clickId = null;
+    let userId = null;
+
     if (isTMA) {
       // In TMA mode, get clickId from initData
       const initDataUnsafe = tg.initDataUnsafe;
+      userId = initDataUnsafe.user?.id;
       clickId = initDataUnsafe.start_param;
       if (clickId && clickId.startsWith('clickid_')) {
         clickId = clickId.split('_')[1];  // Extract the actual click ID
@@ -158,34 +161,51 @@ const Game = ({ config }) => {
       clickId = urlParams.get('click_id');
     }
     
-    if (clickId) {
-      verifyClick(clickId, env);
-    }
-    else {
-      console.log("No Click ID found in URL or tg.initData");
-    }
+    verifyClick(clickId, userId, env);
 
     const script = document.createElement('script');
     script.src = env === 'dev' 
-      ? "https://tma-demo.dmtp.tech/sdk/0.0.5/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D"
-      : "https://bec.dmtp.tech/0.0.4/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D";
+      ? "https://tma-demo.dmtp.tech/sdk/0.0.6/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D"
+      : "https://bec.dmtp.tech/0.0.6/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D";
     script.async = true;
     document.body.appendChild(script);
     return () => {
       document.body.removeChild(script);
     };
-  }, [isTMA]);
+  }, []);
 
-  const verifyClick = async (clickId, env) => {
+  const verifyClick = async (clickId, userId, env) => {
     try {
-      api_url = env == 'dev'
-        ? `https://click-dev.dmtp.tech/banners/click/${encodeURIComponent(clickId)}`
-        : `https://click.dmtp.tech/banners/click/${encodeURIComponent(clickId)}`;
-      const response = await fetch(api_url);
+      console.log(`Verification isTMA: ${isTMA}`);
+      console.log('Verifying click:', { clickId, userId, env }); // Debug log
+      
+      let apiUrl;
+      const baseUrl = env === 'dev' ? 'https://click-dev.dmtp.tech' : 'https://click.dmtp.tech';
+
+      if (isTMA) {
+        if (!userId) {
+          console.error('User ID is required for TMA mode verification');
+          return;
+        }
+        apiUrl = `${baseUrl}/banners/verify?tui=${encodeURIComponent(userId || '')}`;
+        if (clickId) {
+          apiUrl += `&click_id=${encodeURIComponent(clickId)}`;
+        }
+      } else {
+        if (!clickId) {
+          console.error('Click ID is required for non-TMA mode verification');
+          return;
+        }
+        apiUrl = `${baseUrl}/banners/verify/?click_id=${encodeURIComponent(clickId || '')}`;
+      }
+
+      console.log(`Verification request: ${apiUrl}`);
+      const response = await fetch(apiUrl);
       if (!response.ok) {
-        console.log('Click ID verification failed');
+        console.log(`Verification failed: ${response}`);
       }
       const data = await response.json();
+      console.log(`Verification response: ${data}`);
       if (data.valid) {
         setClickVerified(true);
         setScore(100); // Set initial score to 100 for verified clicks
