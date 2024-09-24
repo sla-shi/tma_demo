@@ -176,13 +176,15 @@ const Game = ({ config }) => {
 
   const verifyClick = async (clickId, userId, env) => {
     try {
-      console.log(`Verification isTMA: ${isTMA}`);
+      const tg = window.Telegram?.WebApp;
+      const _isTMA = !!tg;
+      console.log(`Verification isTMA: ${isTMA} vs ${_isTMA}`);
       console.log('Verifying click:', { clickId, userId, env }); // Debug log
       
       let apiUrl;
       const baseUrl = env === 'dev' ? 'https://click-dev.dmtp.tech' : 'https://click.dmtp.tech';
 
-      if (isTMA) {
+      if (_isTMA) {
         if (!userId) {
           console.error('User ID is required for TMA mode verification');
           return;
