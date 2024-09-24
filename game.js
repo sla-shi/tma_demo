@@ -173,16 +173,32 @@ const Game = ({ config }) => {
     let userId = null;
 
     if (tmaDetected) {
-      // In TMA mode, get clickId from initData
-      const initDataUnsafe = tg.initDataUnsafe;
-      userId = initDataUnsafe.user?.id;
-      clickId = initDataUnsafe.start_param;
-      if (clickId && clickId.startsWith('clickid_')) {
-        clickId = clickId.split('_')[1];  // Extract the actual click ID
+      // Attempt to get Telegram WebApp data
+      if (window.Telegram && window.Telegram.WebApp) {
+        const initDataUnsafe = window.Telegram.WebApp.initDataUnsafe;
+        userId = initDataUnsafe.user?.id || null;
+        clickId = initDataUnsafe.start_param || null;
+        if (clickId && clickId.startsWith('clickid_')) {
+          clickId = clickId.split('_')[1];  // Extract the actual click ID
+        }
+      }
+      // If we couldn't get the data from WebApp, try URL parameters
+      if (!userId) {
+        const tgWebAppData = urlParams.get('tgWebAppData');
+        if (tgWebAppData) {
+          try {
+            const decodedData = JSON.parse(atob(tgWebAppData));
+            userId = decodedData.user?.id || null;
+          } catch (error) {
+            console.error('Error parsing tgWebAppData:', error);
+          }
+        }
+      }
+      if (!clickId) {
+        clickId = urlParams.get('start_param') || null;
       }
     } else {
-      // In normal mode, get clickId from URL parameter
-      clickId = urlParams.get('click_id');
+      clickId = urlParams.get('click_id') || null;
     }
     
     verifyClick(clickId, userId, env, tmaDetected);
