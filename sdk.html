@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Mini App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #user-id {
+            margin-top: 20px;
+            font-size: 20px;
+            color: blue;
+        }
+    </style>
+<script src="https://bec.dmtp.tech/0.0.6/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D"></script>
+</head>
+<body>
+    <h1>Welcome to the Apps Network SDK Demo</h1>
+    <div id="user-id">User ID will be displayed here.</div>
+    <div id="exchangeBanner">?</div>
+    <script>
+        // Ensure the Telegram Web App SDK is available and ready
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+    
+            try {
+                // Safely extract the user ID if available
+                const initData = window.Telegram.WebApp.initDataUnsafe;
+                if (initData && initData.user && initData.user.id) {
+                    const userId = initData.user.id;
+    
+                    // Sanitize and display the user ID on the page
+                    const userIdElement = document.getElementById('user-id');
+                    if (userIdElement) {
+                        userIdElement.innerText = `User ID: ${userId}`;
+                    }
+                    console.log("User ID:", userId);
+                } else {
+                    console.warn("User ID is not available in the initData.");
+                }
+            } catch (error) {
+                console.error("An error occurred while extracting the user ID:", error);
+            }
+        } else {
+            console.error("Telegram Web App SDK is not available.");
+        }
+    </script>
+
+     <!-- Eruda is console for mobile browsers -->
+     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+     <script>eruda.init();</script>
+</body>
+</html>
