@@ -78,6 +78,8 @@ const AboutModal = ({ isOpen, onClose, gameInfo, environment, isTMA }) => {
         <p dangerouslySetInnerHTML={{ __html: gameInfo.backgroundCredit }} />
         <h3>Object Image</h3>
         <p dangerouslySetInnerHTML={{ __html: gameInfo.objectCredit }} />
+        <h3>Apps Network Role</h3>
+        <p>Current role: {role || 'Not specified'}</p>
         <h3>Telegram User Info (Debug)</h3>
         <p>User ID: {userId}</p>
         <h3>Environment</h3>
@@ -135,11 +137,14 @@ const Game = ({ config }) => {
   const [environment, setEnvironment] = useState('prod');
   const [clickVerified, setClickVerified] = useState(false);
   const [isTMA, setIsTMA] = useState(false);
+  const [role, setRole] = useState(null);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const env = urlParams.get('env') || 'prod';
+    const userRole = urlParams.get('role');
     setEnvironment(env);
+    setRole(userRole);
 
     // Improved TMA detection
     const detectTMA = () => {
@@ -201,7 +206,11 @@ const Game = ({ config }) => {
       clickId = urlParams.get('click_id') || null;
     }
     
-    verifyClick(clickId, userId, env, tmaDetected);
+    if (userRole) {
+      verifyClick(clickId, userId, env, tmaDetected, userRole);
+    } else {
+      console.log('No role specified, skipping click verification');
+    }
 
     const script = document.createElement('script');
     script.src = env === 'dev' 
@@ -214,7 +223,79 @@ const Game = ({ config }) => {
     };
   }, []);
 
-  const verifyClick = async (clickId, userId, env, isTMA) => {
+  const verifyClick = async (clickId, userId, env, isTMA, userRole) => {
+    try {
+      console.log('Verifying click:', { clickId, userId, env, userRole, isTMA }); // Debug log
+      
+      let apiUrl;
+      const baseUrl = env === 'dev' ? 'https://click-dev.dmtp.tech' : 'https://click.dmtp.tech';
+  
+      if (userRole === 'publisher') {
+        // Publishers use GET to retrieve click events
+        apiUrl = `${baseUrl}/banners/events?`;
+        if (isTMA && userId) {
+          apiUrl += `wa=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D`;
+        } else if (!isTMA && clickId) {
+          apiUrl += `wa=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D`;
+        } else {
+          console.error('Invalid parameters for publisher verification');
+          return;
+        }
+  
+        const response = await fetch(apiUrl);
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Publisher events retrieved:', data);
+          // Check if there's a click event in the response
+          const clickEvent = data.items.find(item => item.action === "CLICK");
+          if (clickEvent) {
+            console.log('Click event found, verifying click');
+            setClickVerified(true);
+            setScore(100); // Set initial score to 100 for verified clicks
+          } else {
+            console.log('No click event found');
+          }
+        } else {
+          console.log('Failed to retrieve publisher events');
+        }
+      } else if (userRole === 'advertiser') {
+        // Advertisers use the verify endpoint
+        if (isTMA) {
+          if (!userId) {
+            console.error('User ID is required for TMA mode verification');
+            return;
+          }
+          apiUrl = `${baseUrl}/banners/verify?tui=${encodeURIComponent(userId)}`;
+          if (clickId) {
+            apiUrl += `&click_id=${encodeURIComponent(clickId)}`;
+          }
+        } else {
+          if (!clickId) {
+            console.error('Click ID is required for non-TMA mode verification');
+            return;
+          }
+          apiUrl = `${baseUrl}/banners/verify?click_id=${encodeURIComponent(clickId)}`;
+        }
+  
+        const response = await fetch(apiUrl);
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Advertiser click verification response:', data);
+          if (data.valid) {
+            setClickVerified(true);
+            setScore(100); // Set initial score to 100 for verified clicks
+            console.log('Click verified, set score to 100!');
+          }
+        } else {
+          console.log('Verification failed');
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  const _verifyClick = async (clickId, userId, env, isTMA) => {
     try {
       const _isTMA = false; //detectTMA()
       console.log(`Verification isTMA: ${isTMA} vs ${_isTMA}`);
@@ -343,6 +424,7 @@ const Game = ({ config }) => {
         }}
         environment={environment}
         isTMA={isTMA}
+        role={role}
       />
     </div>
   );
@@ -379,7 +461,7 @@ const games = {
     backgroundCredit: 'Photo by <a href="https://unsplash.com/@silasbaisch?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Silas Baisch</a> on <a href="https://unsplash.com/photos/blue-and-clear-body-of-water-K785Da4A_JA?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>',
     objectUrl: 'game_assets/jellyfish-cute.png',
     objectCredit: 'Photo by <a href="https://designer.microsoft.com/consumerTermsOfUse/en-GB/consumerTermsOfUse.pdf">DALLE 3</a>',
-    moveInterval: 4000,
+    moveInterval: 3000,
   },
 };
 
