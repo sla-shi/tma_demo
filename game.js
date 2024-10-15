@@ -246,14 +246,20 @@ const Game = ({ config }) => {
         if (response.ok) {
           const data = await response.json();
           console.log('Publisher events retrieved:', data);
-          // Check if there's a click event in the response
-          const clickEvent = data.items.find(item => item.action === "CLICK");
-          if (clickEvent) {
-            console.log('Click event found, verifying click');
-            setClickVerified(true);
-            setScore(100); // Set initial score to 100 for verified clicks
+          // Check if there are any items in the response
+          if (data.items && data.items.length > 0) {
+            const clickEvents = data.items.filter(item => item.action === "CLICK");
+            if (clickEvents.length > 0) {
+              console.log(`${clickEvents.length} offer wall click event(s) found, verifying click`);
+              setClickVerified(true);
+              const newScore = data.items.length * 100;
+              setScore(newScore);
+              console.log(`Set initial score to ${newScore} based on ${data.items.length} event(s)`);
+            } else {
+              console.log('No click events found');
+            }
           } else {
-            console.log('No click event found');
+            console.log('No events found in the response');
           }
         } else {
           console.log('Failed to retrieve publisher events');
@@ -289,49 +295,6 @@ const Game = ({ config }) => {
         } else {
           console.log('Verification failed');
         }
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
-  const _verifyClick = async (clickId, userId, env, isTMA) => {
-    try {
-      const _isTMA = false; //detectTMA()
-      console.log(`Verification isTMA: ${isTMA} vs ${_isTMA}`);
-      console.log('Verifying click:', { clickId, userId, env }); // Debug log
-      
-      let apiUrl;
-      const baseUrl = env === 'dev' ? 'https://click-dev.dmtp.tech' : 'https://click.dmtp.tech';
-
-      if (isTMA) {
-        if (!userId) {
-          console.error('User ID is required for TMA mode verification');
-          return;
-        }
-        apiUrl = `${baseUrl}/banners/verify?tui=${encodeURIComponent(userId || '')}`;
-        if (clickId) {
-          apiUrl += `&click_id=${encodeURIComponent(clickId)}`;
-        }
-      } else {
-        if (!clickId) {
-          console.error('Click ID is required for non-TMA mode verification');
-          return;
-        }
-        apiUrl = `${baseUrl}/banners/verify/?click_id=${encodeURIComponent(clickId || '')}`;
-      }
-
-      console.log(`Verification request: ${apiUrl}`);
-      const response = await fetch(apiUrl);
-      if (!response.ok) {
-        console.log(`Verification failed: ${response}`);
-      }
-      const data = await response.json();
-      console.log('Verification response: ', JSON.stringify(data, null, 2));
-      if (data.valid) {
-        setClickVerified(true);
-        setScore(100); // Set initial score to 100 for verified clicks
-        console.log('Click ID verified, set score to 100!');
       }
     } catch (error) {
       console.error('Error:', error);
