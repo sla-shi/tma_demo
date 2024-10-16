@@ -252,7 +252,7 @@ const Game = ({ config }) => {
             if (clickEvents.length > 0) {
               console.log(`${clickEvents.length} offer wall click event(s) found, verifying click`);
               setClickVerified(true);
-              const newScore = data.items.length * 100;
+              const newScore = data.items.length * 10;
               setScore(newScore);
               console.log(`Set initial score to ${newScore} based on ${data.items.length} event(s)`);
             } else {
