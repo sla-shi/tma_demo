@@ -15,13 +15,22 @@
             color: blue;
         }
     </style>
-<script src="https://bec.dmtp.tech/0.0.6/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D"></script>
-</head>
+    <!-- Load the React library (version 18) in production mode -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+
+    <!-- Load the ReactDOM library (version 18) in production mode for rendering React components to the DOM -->
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+    <!-- Load the Apps Network SDK v0.0.6 with the hashed wallet address of the publisher -->
+    <script src="https://bec.dmtp.tech/0.0.6/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D"></script>
+    </head>
 <body>
     <h1>Welcome to the Apps Network SDK Demo</h1>
-    <div id="user-id"></div>
 
+    <!-- Ensure to add the div with id exchangeBanner anywhere in your page, can be empty -->
     <div id="exchangeBanner"></div>
+
+    <!-- Add a button to trigger the Apps Network offer wall -->
     <button id="openOfferWallButton">Open Offer Wall</button>
 
     <script>
@@ -29,39 +38,13 @@
     const openOfferWallButton = document.getElementById('openOfferWallButton');
     openOfferWallButton.addEventListener('click', function() {
         if (TE && typeof TE.offerWall === 'function') {
-        TE.offerWall();
+        TE.offerWall();   // show the Apps Network offer wall when button clicked
         } else {
         console.error('TE is not defined or offerWall is not a function');
         }
     });
     });
     </script>
-    <script>
-        // Ensure the Telegram Web App SDK is available and ready
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.ready();
-    
-            try {
-                // Safely extract the user ID if available
-                const initData = window.Telegram.WebApp.initDataUnsafe;
-                if (initData && initData.user && initData.user.id) {
-                    const userId = initData.user.id;
-    
-                    // Sanitize and display the user ID on the page
-                    const userIdElement = document.getElementById('user-id');
-                    if (userIdElement) {
-                        userIdElement.innerText = `User ID: ${userId}`;
-                    }
-                    console.log("User ID:", userId);
-                } else {
-                    console.warn("User ID is not available in the initData.");
-                }
-            } catch (error) {
-                console.error("An error occurred while extracting the user ID:", error);
-            }
-        } else {
-            console.error("Telegram Web App SDK is not available.");
-        }
-    </script>
+
 </body>
 </html>
