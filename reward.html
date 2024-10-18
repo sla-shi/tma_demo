@@ -22,6 +22,7 @@
 
         async function checkRewards() {
             var tui = getTelegramUserId();
+            
             walletAddress = 'QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D'
 
             const response = await fetch(`https://click.dmtp.tech/banners/events?wa=${walletAddress}`);
@@ -32,7 +33,7 @@
                 // 1. item.action === "CLICK": Only include events with "CLICK" action
                 // 2. item.tui === tui: Match the event's Telegram User ID with the current user's ID
                 // 3. || []: Fallback to an empty array if data.items is null/undefined or no items pass the filter
-            const userClicks = data.items?.filter(item => item.action === "CLICK" && item.tui === tui) || [];
+            const userClicks = data.items?.filter(item => item.action === "CLICK" && item.tui == tui) || [];
             const clickCount = userClicks.length;
             const rewardPoints = clickCount * 100;
 
