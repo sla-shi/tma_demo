@@ -7,6 +7,7 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://bec.dmtp.tech/0.0.6/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
     <h1>Apps Network SDK Demo</h1> <!-- use this file URL for the Telegram bot mini app URL -->
@@ -27,7 +28,6 @@
 
             const response = await fetch(`https://click.dmtp.tech/banners/events?wa=${walletAddress}`);
             const data = await response.json();
-            console.log(data);
 
             // Filter the events to only include "CLICK" actions by the current user:
                 // 1. item.action === "CLICK": Only include events with "CLICK" action
