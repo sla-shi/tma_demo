@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Mini App</title>
+    <title>Telegram Mini App - Example of Apps Network Integration</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,8 +19,23 @@
 </head>
 <body>
     <h1>Welcome to the Apps Network SDK Demo</h1>
-    <div id="user-id">User ID will be displayed here.</div>
-    <div id="exchangeBanner">?</div>
+    <div id="user-id"></div>
+
+    <div id="exchangeBanner"></div>
+    <button id="openOfferWallButton">Open Offer Wall</button>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const openOfferWallButton = document.getElementById('openOfferWallButton');
+    openOfferWallButton.addEventListener('click', function() {
+        if (TE && typeof TE.offerWall === 'function') {
+        TE.offerWall();
+        } else {
+        console.error('TE is not defined or offerWall is not a function');
+        }
+    });
+    });
+    </script>
     <script>
         // Ensure the Telegram Web App SDK is available and ready
         if (window.Telegram && window.Telegram.WebApp) {
@@ -48,9 +63,5 @@
             console.error("Telegram Web App SDK is not available.");
         }
     </script>
-
-     <!-- Eruda is console for mobile browsers -->
-     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-     <script>eruda.init();</script>
 </body>
 </html>
