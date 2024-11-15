@@ -153,6 +153,12 @@ const Game = ({ config }) => {
     setEnvironment(env);
     setRole(userRole);
 
+    if (TE && typeof TE.onLoad === 'function') {
+      TE.onLoad()
+  } else {
+      console.error('onLoad is not a function');
+  }
+  
     // Improved TMA detection
     const detectTMA = () => {
       if (window.Telegram && window.Telegram.WebApp) {
@@ -219,15 +225,15 @@ const Game = ({ config }) => {
       console.log('No role specified, skipping click verification');
     }
 
-    const script = document.createElement('script');
-    script.src = env === 'dev' 
-      ? "https://tma-demo.dmtp.tech/sdk/0.0.8/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D"
-      : "https://bec.dmtp.tech/0.0.8/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D";
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
+    // const script = document.createElement('script');
+    // script.src = env === 'dev' 
+    //   ? "https://tma-demo.dmtp.tech/sdk/0.0.8/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D"
+    //   : "https://bec.dmtp.tech/0.0.8/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D";
+    // script.async = true;
+    // document.body.appendChild(script);
+    // return () => {
+    //   document.body.removeChild(script);
+    // };
   }, []);
 
   const verifyClick = async (clickId, userId, env, isTMA, userRole) => {
