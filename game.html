@@ -7,8 +7,6 @@
     <title>Clicker Game</title>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-
-
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
     <style>
@@ -46,23 +44,15 @@
             overflow: hidden;
             background-color: #0a1929; /* Dark blue color for the entire page */
         }
-        #exchangeBanner {
-            width: 320px;
-            height: 115px;
-            margin: 0 auto;
-            background-color: #0a1929;
-            justify-content: center;
-            align-items: center;
-        }
         #game-container {
             width: 100%;
-            height: calc(100% - 50px);
+            height: calc(100% - 0px);
             position: relative;
         }
     </style>
 </head>
 <body>
-    <div id="exchangeBanner">Ad Banner Placeholder</div>
+    <div id="exchangeBanner"></div>
     <div id="game-container"></div>
    
     <!-- Babel for JSX transformation -->

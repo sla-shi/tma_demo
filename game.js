@@ -1,4 +1,11 @@
 // game.js
+function getTelegramUserId() {
+  try {
+    return window.Telegram.WebApp.initDataUnsafe.user.id;
+  } catch (error) {
+    return 1000000000;
+  }
+}
 
 const { useState, useEffect, useCallback } = React;
 
@@ -97,7 +104,7 @@ const MainMenu = ({ onStartGame, onPause, onResume, onShowTopScores, onQuit, onS
   const handlePauseClick = useCallback(() => {
     onPause();
     if (window.TE && typeof window.TE.offerWall === 'function') {
-      window.TE.offerWall();
+      window.TE.offerWall();  // show offer wall on a button click
     } else {
       console.error('TE is not defined or offerWall is not a function');
     }
@@ -175,7 +182,7 @@ const Game = ({ config }) => {
     console.log('TMA detected:', tmaDetected); // Debug log
 
     let clickId = null;
-    let userId = null;
+    const userId = getTelegramUserId();;
 
     if (tmaDetected) {
       // Attempt to get Telegram WebApp data
@@ -214,8 +221,8 @@ const Game = ({ config }) => {
 
     const script = document.createElement('script');
     script.src = env === 'dev' 
-      ? "https://tma-demo.dmtp.tech/sdk/0.0.6/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D"
-      : "https://bec.dmtp.tech/0.0.6/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D";
+      ? "https://tma-demo.dmtp.tech/sdk/0.0.8/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D"
+      : "https://bec.dmtp.tech/0.0.8/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D";
     script.async = true;
     document.body.appendChild(script);
     return () => {
@@ -234,14 +241,14 @@ const Game = ({ config }) => {
         // Publishers use GET to retrieve click events
         apiUrl = `${baseUrl}/banners/events?`;
         if (isTMA && userId) {
-          apiUrl += `wa=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D`;
+          apiUrl += `wa=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D&tui=${userId}`;
         } else if (!isTMA && clickId) {
-          apiUrl += `wa=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D`;
+          apiUrl += `wa=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D&tui=${userId}`;
         } else {
           console.error('Invalid parameters for publisher verification');
           return;
         }
-  
+        
         const response = await fetch(apiUrl);
         if (response.ok) {
           const data = await response.json();
