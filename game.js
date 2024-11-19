@@ -188,7 +188,7 @@ const Game = ({ config }) => {
     console.log('TMA detected:', tmaDetected); // Debug log
 
     let clickId = null;
-    const userId = getTelegramUserId();;
+    let userId = getTelegramUserId();;
 
     if (tmaDetected) {
       // Attempt to get Telegram WebApp data
