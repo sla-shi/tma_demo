@@ -241,7 +241,7 @@ const Game = ({ config }) => {
       console.log('Verifying click:', { clickId, userId, env, userRole, isTMA }); // Debug log
       
       let apiUrl;
-      const baseUrl = env === 'dev' ? 'https://click-dev.dmtp.tech' : 'https://click.dmtp.tech';
+      const baseUrl = env === 'dev' ? 'https://dev.apps-network.net' : 'https://apps-network.net';
   
       if (userRole === 'publisher') {
         // Publishers use GET to retrieve click events
