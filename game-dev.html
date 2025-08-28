@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title id="gameTitle">Mini Game</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clicker Game</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <style>
+        #eruda {
+            z-index: 1000000 !important;
+        }
+        #eruda-style {
+            z-index: 1000000 !important;
+        }
+        #game-container {
+            z-index: 1;
+        }
+    </style>
+    <script>
+        eruda.init({
+            tool: ['console', 'elements', 'network', 'resources', 'info'],
+            useShadowDom: false,
+            container: document.body,
+            autoScale: true,
+            defaults: {
+                displaySize: 50,
+                transparency: 0.9,
+                theme: 'Monokai Pro'
+            }
+        });
+        // eruda.show();
+        eruda.position({x: 10, y: 10});
+        eruda.scale(0.8);
+    </script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background-color: #0a1929; /* Dark blue color for the entire page */
+        }
+        #game-container {
+            width: 100%;
+            height: calc(100% - 0px);
+            position: relative;
+        }
+    </style>
+    <script type="text/javascript">
+        var microadCompass = microadCompass || {};
+        microadCompass.queue = microadCompass.queue || [];
+  </script>
+  <script type="text/javascript" charset="UTF-8" src="//j.microad.net/js/compass.js" onload="new microadCompass.AdInitializer().initialize();" async></script>  
+  <!-- Add Telegram Analytics script to HTML head -->
+    <script
+        async 
+        src="https://unpkg.com/@telegram-apps/analytics@latest/dist/index.js"
+        onload="initAnalytics()"  
+        type="text/javascript">
+    </script>
+     <script>
+        function initAnalytics() {
+          window.telegramAnalytics.init({
+    token: 'eyJhcHBfbmFtZSI6ImNsaWNrZXJfZ2FtZV9kZW1vIiwiYXBwX3VybCI6Imh0dHBzOi8vdC5tZS9UTUFfV2ViQXBwVXNlcl9QT0NfMV9ib3QiLCJhcHBfZG9tYWluIjoiaHR0cHM6Ly9zbGEtc2hpLmdpdGh1Yi5pby90bWFfZGVtby9nYW1lLmh0bWw/Z2FtZT1kZWVwU2VhQ2xpY2tlciZlbnY9ZGV2In0=!Y8V1iNGCasLLI2HOJ6iUqEQ7xXXHOKSNXoLFWVNSN4s=',
+            appName: 'clicker_game_demo',
+          });
+        }
+    </script>
+<!-- telemetree integration -->
+
+<script src="https://s3.eu-central-1.amazonaws.com/cdn.telemetree.io/telemetree-pixel.js"></script>
+<script>
+    const telemetreeBuilder = telemetree({
+        projectId: "ef3c2b38-11f4-40db-bb70-cc5767293638",
+        apiKey: "5f616c8b-5973-4b6e-b689-5cd513d02d13",
+        isTelegramContext: true, // use false, if a website is not in Telegram Web App context
+        logLevel: 'info', // set log level to debug if you need to. Default is info. (options: error, warn, info, debug)
+        trackGroup: "medium" // set group to low if you need to. Default is medium. (options: "high", "medium", "low", false)
+    });
+</script>
+
+
+</head>
+<body>
+    <div id="exchangeBanner"></div>
+    <div id="game-container"></div>
+
+    <div id="eab520ff98eb3be4de6fbb36f72da6a8" >
+        <script type="text/javascript">
+          microadCompass.queue.push({
+            "spot": "eab520ff98eb3be4de6fbb36f72da6a8"
+          });
+        </script>
+      </div>
+
+   
+
+    <!-- Babel for JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Game script - Load last -->
+    <script src="https://bec-dev.apps-network.net/latest/bec.js?walletAddress=QnLOYksIDhA3MfBLoRL%2ByIa8jRggeovB3NtN3d7LD7g%3D"></script>
+    <script type="text/babel" src="game.js"></script>
+</body>
+</html>
